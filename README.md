@@ -1,4 +1,5 @@
-# java-mongo-scheduler
+# Okra
+A simple and scalable Scheduler that uses MongoDB as backend
 
 ### Requirements
 
@@ -6,7 +7,7 @@
 * MongoDB
 
 #### Note
-Right now Mongo Scheduler requires Spring Data MongoDB to work, but you can send a Pull Request any time creating a new maven module (like spring-mongo-scheduler) that requires only the raw MongoDB Driver.
+Right now Okra was only one module that requires Spring Data MongoDB to work, but you can send a Pull Request any time creating a new maven module (like okra-spring) that requires only the raw MongoDB Driver.
 
 ### Quick start
 

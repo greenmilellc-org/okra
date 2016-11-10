@@ -30,6 +30,7 @@ public class BenchmarkTest {
     public static GenericContainer mongo =
             new GenericContainer("mongo:3.2")
                     .withExposedPorts(27017);
+
     private static MongoScheduler<DefaultScheduledItem> scheduler;
     private AtomicLong totalProcessedItems = new AtomicLong(0);
 
