@@ -1,5 +1,6 @@
 .idea/
 target/
 *.iml
-/spring-mongo-scheduler/target/
-/mongo-scheduler-core/target/
+/okra-spring/target/
+/okra-core/target/
+/okra-benchmarks/target/
