@@ -1,9 +1,55 @@
 # java-mongo-scheduler
 
+### Requirements
+
+* Java 8
+* MongoDB
+
+#### Note
+Right now Mongo Scheduler requires Spring Data MongoDB to work, but you can send a Pull Request any time creating a new maven module (like spring-mongo-scheduler) that requires only the raw MongoDB Driver.
+
+### Quick start
+
+Configure a scheduler
+```java
+public class MyMongoScheduler {
+    
+    private MongoScheduler scheduler;
+
+    public void initScheduler() {
+        scheduler = new SpringMongoSchedulerBuilder<DefaultScheduledItem>()
+                        .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
+                        .withDatabase("schedulerBenchmark")
+                        .withSchedulerCollectionName("schedulerCollection")
+                        .withExpiration(5, TimeUnit.MINUTES)
+                        .withScheduledItemClass(DefaultScheduledItem.class)
+                        .validateAndBuild();        
+    }
+    
+}
+```
+
+Then, use this scheduler to retrieve scheduled items...
+
+```java
+public class MyMongoScheduler {
+    
+    private MongoScheduler scheduler;
+    
+    public void retrieveLoop() {
+        while (running) {
+            Optional<DefaultScheduledItem> scheduledOpt = scheduler.poll();
+                if (scheduled.isPresent()) {
+                    doSomeWork(scheduledOpt.get());                
+                }    
+        }
+    }
+    
+}
+```
 
 
-
-# License
+### License
 
 MIT License
 

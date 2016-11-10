@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class BenchmarkTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BenchmarkTest.class);
+
     @ClassRule
     public static GenericContainer mongo =
             new GenericContainer("mongo:3.2")
