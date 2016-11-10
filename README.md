@@ -10,6 +10,43 @@ A simple and scalable Scheduler that uses MongoDB as backend
 #### Note
 Right now Okra was only one module that requires Spring Data MongoDB to work, but you can send a Pull Request any time creating a new maven module (like okra-spring) that requires only the raw MongoDB Driver.
 
+### Binaries
+
+[![](https://jitpack.io/v/fernandonogueira/okra.svg)](https://jitpack.io/#fernandonogueira/okra)
+
+#### Gradle
+build.gradle
+```groovy
+    allprojects {
+        repositories {
+            ...
+            maven { url "https://jitpack.io" }
+        }
+    }
+```
+
+```groovy
+    dependencies {
+        compile 'com.github.fernandonogueira.okra:okra-spring:v0.1-alpha'
+    }
+```
+
+#### Maven
+```xml
+	<dependency>
+	    <groupId>com.github.fernandonogueira.okra</groupId>
+	    <artifactId>okra-spring</artifactId>
+	    <version>v0.1-alpha</version>
+	</dependency>
+
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+```
+
 ### Quick start
 
 Configure a scheduler
@@ -59,7 +96,6 @@ $ cd okra
 $ mvn install -DskipTests
 ```
 [![Build Status](https://travis-ci.org/fernandonogueira/okra.svg?branch=master)](https://travis-ci.org/fernandonogueira/okra)
-[![](https://jitpack.io/v/fernandonogueira/okra.svg)](https://jitpack.io/#fernandonogueira/okra)
 
 ### LICENSE
 ```
