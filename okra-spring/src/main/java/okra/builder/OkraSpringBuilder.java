@@ -1,6 +1,6 @@
 package okra.builder;
 
-import okra.SpringOkra;
+import okra.OkraSpring;
 import okra.base.AbstractOkra;
 import okra.base.OkraItem;
 import okra.exception.InvalidOkraConfigurationException;
@@ -8,21 +8,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-public class SpringOkraBuilder<T extends OkraItem> extends OkraBuilder<T> {
+public class OkraSpringBuilder<T extends OkraItem> extends OkraBuilder<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringOkraBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OkraSpringBuilder.class);
 
     private MongoTemplate mongoTemplate;
 
     @Override
     AbstractOkra<T> build() {
         validateConfiguration();
-        return new SpringOkra<>(mongoTemplate, getDatabase(),
+        return new OkraSpring<>(mongoTemplate, getDatabase(),
                 getCollection(), getExpireDuration(),
                 getExpireDurationUnit(), getScheduleItemClass());
     }
 
-    public SpringOkraBuilder<T> withMongoTemplate(MongoTemplate mongoTemplate) {
+    public OkraSpringBuilder<T> withMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         return this;
     }

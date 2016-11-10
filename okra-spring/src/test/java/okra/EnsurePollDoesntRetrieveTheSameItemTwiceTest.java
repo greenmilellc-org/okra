@@ -2,8 +2,8 @@ package okra;
 
 import com.mongodb.MongoClient;
 import okra.base.Okra;
-import okra.builder.SpringOkraBuilder;
-import okra.model.DefaultScheduledItem;
+import okra.builder.OkraSpringBuilder;
+import okra.model.DefaultOkraItem;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class EnsurePollDoesntRetrieveTheSameItemTwiceTest {
             new GenericContainer("mongo:3.2")
                     .withExposedPorts(27017);
 
-    private static Okra<DefaultScheduledItem> scheduler;
+    private static Okra<DefaultOkraItem> scheduler;
 
     @BeforeClass
     public static void prepareScheduler() throws UnknownHostException {
@@ -32,12 +32,12 @@ public class EnsurePollDoesntRetrieveTheSameItemTwiceTest {
                 mongo.getContainerIpAddress(),
                 mongo.getMappedPort(27017));
 
-        scheduler = new SpringOkraBuilder<DefaultScheduledItem>()
+        scheduler = new OkraSpringBuilder<DefaultOkraItem>()
                 .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
                 .withDatabase("schedulerBenchmark")
                 .withSchedulerCollectionName("schedulerCollection")
                 .withExpiration(5, TimeUnit.MINUTES)
-                .withScheduledItemClass(DefaultScheduledItem.class)
+                .withScheduledItemClass(DefaultOkraItem.class)
                 .validateAndBuild();
     }
 
@@ -45,13 +45,13 @@ public class EnsurePollDoesntRetrieveTheSameItemTwiceTest {
     public void ensurePollDoesntRetrieveTheSameItemTwiceTest() {
         given_that_an_item_was_scheduled();
 
-        Optional<DefaultScheduledItem> retrievedOpt = scheduler.poll();
+        Optional<DefaultOkraItem> retrievedOpt = scheduler.poll();
 
         assertThat(retrievedOpt.isPresent()).isTrue();
 
-        DefaultScheduledItem item = retrievedOpt.get();
+        DefaultOkraItem item = retrievedOpt.get();
 
-        Optional<DefaultScheduledItem> optThatShouldBeEmpty = scheduler.poll();
+        Optional<DefaultOkraItem> optThatShouldBeEmpty = scheduler.poll();
 
         assertThat(optThatShouldBeEmpty.isPresent()).isFalse();
 
@@ -60,7 +60,7 @@ public class EnsurePollDoesntRetrieveTheSameItemTwiceTest {
     }
 
     private void given_that_an_item_was_scheduled() {
-        DefaultScheduledItem item = new DefaultScheduledItem();
+        DefaultOkraItem item = new DefaultOkraItem();
         item.setRunDate(LocalDateTime.now().minusNanos(100));
         scheduler.schedule(item);
     }

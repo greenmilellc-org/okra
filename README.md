@@ -1,6 +1,7 @@
 # Okra
 A simple and scalable Scheduler that uses MongoDB as backend
 
+
 ### Requirements
 
 * Java 8
@@ -13,17 +14,17 @@ Right now Okra was only one module that requires Spring Data MongoDB to work, bu
 
 Configure a scheduler
 ```java
-public class MyMongoScheduler {
+public class MyScheduler {
     
-    private MongoScheduler scheduler;
+    private Okra okra;
     ...
     public void initScheduler() {
-        scheduler = new SpringMongoSchedulerBuilder<DefaultScheduledItem>()
+        okra = new OkraSpringBuilder<DefaultOkraItem>()
                         .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
                         .withDatabase("schedulerBenchmark")
                         .withSchedulerCollectionName("schedulerCollection")
                         .withExpiration(5, TimeUnit.MINUTES)
-                        .withScheduledItemClass(DefaultScheduledItem.class)
+                        .withScheduledItemClass(DefaultOkraItem.class)
                         .validateAndBuild();        
     }
     ...    
@@ -33,13 +34,13 @@ public class MyMongoScheduler {
 Then, use this scheduler to retrieve scheduled items...
 
 ```java
-public class MyMongoScheduler {
+public class MyScheduler {
     
-    private MongoScheduler scheduler;
+    private Okra okra;
     ...    
     public void retrieveLoop() {
         while (running) {
-            Optional<DefaultScheduledItem> scheduledOpt = scheduler.poll();
+            Optional<DefaultOkraItem> scheduledOpt = okra.poll();
                 if (scheduled.isPresent()) {
                     doSomeWork(scheduledOpt.get());                
                 }    
@@ -48,9 +49,19 @@ public class MyMongoScheduler {
     ...    
 }
 ```
+#### Build
 
+To build:
 
-### License
+```bash
+$ git clone git@github.com:fernandonogueira/okra.git
+$ cd okra
+$ mvn install -DskipTests
+```
+[![Build Status](https://travis-ci.org/fernandonogueira/okra.svg?branch=master)](https://travis-ci.org/fernandonogueira/okra)
+[![](https://jitpack.io/v/fernandonogueira/okra.svg)](https://jitpack.io/#fernandonogueira/okra)
+
+### LICENSE
 ```
 MIT License
 

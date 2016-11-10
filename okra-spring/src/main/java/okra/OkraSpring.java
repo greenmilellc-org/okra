@@ -19,15 +19,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class SpringOkra<T extends OkraItem> extends AbstractOkra<T> {
+public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringOkra.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OkraSpring.class);
 
     private final MongoTemplate mongoTemplate;
     private final long defaultheartbeatExpirationMillis;
     private final Class<T> scheduleItemClass;
 
-    public SpringOkra(MongoTemplate mongoTemplate,
+    public OkraSpring(MongoTemplate mongoTemplate,
                       String database,
                       String collection,
                       long defaultheartbeatExpiration,

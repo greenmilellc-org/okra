@@ -2,8 +2,8 @@ package okra;
 
 import com.mongodb.MongoClient;
 import okra.base.Okra;
-import okra.builder.SpringOkraBuilder;
-import okra.model.DefaultScheduledItem;
+import okra.builder.OkraSpringBuilder;
+import okra.model.DefaultOkraItem;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class BenchmarkTest {
             new GenericContainer("mongo:3.2")
                     .withExposedPorts(27017);
 
-    private static Okra<DefaultScheduledItem> scheduler;
+    private static Okra<DefaultOkraItem> scheduler;
     private AtomicLong totalProcessedItems = new AtomicLong(0);
 
     @BeforeClass
@@ -41,12 +41,12 @@ public class BenchmarkTest {
                 BenchmarkTest.mongo.getContainerIpAddress(),
                 BenchmarkTest.mongo.getMappedPort(27017));
 
-        BenchmarkTest.scheduler = new SpringOkraBuilder<DefaultScheduledItem>()
+        BenchmarkTest.scheduler = new OkraSpringBuilder<DefaultOkraItem>()
                 .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
                 .withDatabase("schedulerBenchmark")
                 .withSchedulerCollectionName("schedulerCollection")
                 .withExpiration(5, TimeUnit.MINUTES)
-                .withScheduledItemClass(DefaultScheduledItem.class)
+                .withScheduledItemClass(DefaultOkraItem.class)
                 .validateAndBuild();
     }
 
@@ -58,7 +58,7 @@ public class BenchmarkTest {
 
 
         for (int i = 0; i < totalItems; i++) {
-            DefaultScheduledItem item = new DefaultScheduledItem();
+            DefaultOkraItem item = new DefaultOkraItem();
             item.setRunDate(LocalDateTime.now().plusSeconds(30));
             scheduler.schedule(item);
         }
@@ -69,11 +69,11 @@ public class BenchmarkTest {
         int receivedItems = 0;
 
         List<Double> deviationList = new ArrayList<>();
-        List<DefaultScheduledItem> processedItems = new ArrayList<>();
+        List<DefaultOkraItem> processedItems = new ArrayList<>();
         while (receivedItems < totalItems) {
-            Optional<DefaultScheduledItem> opt = scheduler.poll();
+            Optional<DefaultOkraItem> opt = scheduler.poll();
             if (opt.isPresent()) {
-                DefaultScheduledItem item = opt.get();
+                DefaultOkraItem item = opt.get();
                 LOGGER.debug("Scheduled item received...: {}", item);
                 receivedItems++;
                 LocalDateTime runDate = item.getRunDate();
@@ -107,7 +107,7 @@ public class BenchmarkTest {
 
         Random random = new Random();
         for (int i = 0; i < totalItems; i++) {
-            DefaultScheduledItem item = new DefaultScheduledItem();
+            DefaultOkraItem item = new DefaultOkraItem();
             item.setRunDate(LocalDateTime.now().plusSeconds(random.nextInt(31)));
             scheduler.schedule(item);
         }
@@ -125,10 +125,10 @@ public class BenchmarkTest {
             futures.add(executor.submit(poller));
         }
 
-        List<DefaultScheduledItem> processedItems = new ArrayList<>();
+        List<DefaultOkraItem> processedItems = new ArrayList<>();
         List<Double> deviationList = new ArrayList<>();
         List<Double> pollerDeviationList;
-        List<DefaultScheduledItem> pollerProcessedItems;
+        List<DefaultOkraItem> pollerProcessedItems;
 
         for (Future<?> future : futures) {
             future.get();
@@ -151,12 +151,12 @@ public class BenchmarkTest {
 
     public class SchedulePoller implements Runnable {
 
-        private final Okra<DefaultScheduledItem> scheduler;
+        private final Okra<DefaultOkraItem> scheduler;
         private final long totalItems;
         private List<Double> deviationList = new ArrayList<>();
-        private List<DefaultScheduledItem> processedItems = new ArrayList<>();
+        private List<DefaultOkraItem> processedItems = new ArrayList<>();
 
-        public SchedulePoller(Okra<DefaultScheduledItem> scheduler, long totalItems) {
+        public SchedulePoller(Okra<DefaultOkraItem> scheduler, long totalItems) {
             this.scheduler = scheduler;
             this.totalItems = totalItems;
         }
@@ -165,9 +165,9 @@ public class BenchmarkTest {
         public void run() {
 
             while (totalProcessedItems.longValue() < totalItems) {
-                Optional<DefaultScheduledItem> opt = scheduler.poll();
+                Optional<DefaultOkraItem> opt = scheduler.poll();
                 if (opt.isPresent()) {
-                    DefaultScheduledItem item = opt.get();
+                    DefaultOkraItem item = opt.get();
                     LOGGER.debug("Scheduled item received...: {}", item);
                     totalProcessedItems.incrementAndGet();
                     LocalDateTime runDate = item.getRunDate();
@@ -191,7 +191,7 @@ public class BenchmarkTest {
             return deviationList;
         }
 
-        public List<DefaultScheduledItem> getProcessedItems() {
+        public List<DefaultOkraItem> getProcessedItems() {
             return processedItems;
         }
     }

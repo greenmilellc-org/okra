@@ -2,7 +2,7 @@ package okra;
 
 import org.junit.Test;
 
-public class MongoSchedulerBuilderTest {
+public class OkraBuilderTest {
 
     @Test
     public void mongoSchedulerBuilderTest() {

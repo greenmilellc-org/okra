@@ -7,12 +7,8 @@ import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-/**
- * @author Fernando Nogueira
- * @since 11/9/16 9:23 AM
- */
 @Data
-public class DefaultScheduledItem implements OkraItem {
+public class DefaultOkraItem implements OkraItem {
 
     @Id
     private String id;
