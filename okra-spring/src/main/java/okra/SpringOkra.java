@@ -1,9 +1,9 @@
-package mongo.scheduler;
+package okra;
 
-import mongo.scheduler.base.AbstractMongoScheduler;
-import mongo.scheduler.base.ScheduledItem;
-import mongo.scheduler.base.ScheduledStatus;
-import mongo.scheduler.exception.SchedulerRuntimeException;
+import okra.base.AbstractOkra;
+import okra.base.OkraItem;
+import okra.base.OkraStatus;
+import okra.exception.OkraRuntimeException;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,20 +19,20 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class SpringMongoScheduler<T extends ScheduledItem> extends AbstractMongoScheduler<T> {
+public class SpringOkra<T extends OkraItem> extends AbstractOkra<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringMongoScheduler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringOkra.class);
 
     private final MongoTemplate mongoTemplate;
     private final long defaultheartbeatExpirationMillis;
     private final Class<T> scheduleItemClass;
 
-    public SpringMongoScheduler(MongoTemplate mongoTemplate,
-                                String database,
-                                String collection,
-                                long defaultheartbeatExpiration,
-                                TimeUnit defaultheartbeatExpirationUnit,
-                                Class<T> scheduleItemClass) {
+    public SpringOkra(MongoTemplate mongoTemplate,
+                      String database,
+                      String collection,
+                      long defaultheartbeatExpiration,
+                      TimeUnit defaultheartbeatExpirationUnit,
+                      Class<T> scheduleItemClass) {
         super(database, collection);
         this.mongoTemplate = mongoTemplate;
         this.defaultheartbeatExpirationMillis = defaultheartbeatExpirationUnit.toMillis(defaultheartbeatExpiration);
@@ -52,7 +52,7 @@ public class SpringMongoScheduler<T extends ScheduledItem> extends AbstractMongo
         Criteria mainOr = generatePollCriteria(expiredheartbeatDate);
 
         Update update = Update
-                .update("status", ScheduledStatus.PROCESSING)
+                .update("status", OkraStatus.PROCESSING)
                 .set("heartbeat", LocalDateTime.now());
 
         Query query = Query.query(mainOr);
@@ -66,7 +66,7 @@ public class SpringMongoScheduler<T extends ScheduledItem> extends AbstractMongo
     private Criteria generatePollCriteria(LocalDateTime expiredheartbeatDate) {
         Criteria heartbeatCriteria = new Criteria()
                 .andOperator(
-                        Criteria.where("status").is(ScheduledStatus.PROCESSING),
+                        Criteria.where("status").is(OkraStatus.PROCESSING),
                         new Criteria().orOperator(
                                 Criteria.where("heartbeat").lt(expiredheartbeatDate),
                                 Criteria.where("heartbeat").is(null)
@@ -75,7 +75,7 @@ public class SpringMongoScheduler<T extends ScheduledItem> extends AbstractMongo
         Criteria pendingCriteria = new Criteria().andOperator(
                 Criteria.where("runDate")
                         .lt(LocalDateTime.now()),
-                Criteria.where("status").is(ScheduledStatus.PENDING)
+                Criteria.where("status").is(OkraStatus.PENDING)
         );
 
         return new Criteria().orOperator(pendingCriteria, heartbeatCriteria);
@@ -83,7 +83,7 @@ public class SpringMongoScheduler<T extends ScheduledItem> extends AbstractMongo
 
     @Override
     public Optional<T> reschedule(T item) {
-        throw new SchedulerRuntimeException();
+        throw new OkraRuntimeException();
     }
 
     @Override
@@ -102,7 +102,7 @@ public class SpringMongoScheduler<T extends ScheduledItem> extends AbstractMongo
         Criteria criteria = Criteria.where("_id")
                 .is(new ObjectId(item.getId()))
                 .and("heartbeat").is(item.getHeartbeat())
-                .and("status").is(ScheduledStatus.PROCESSING);
+                .and("status").is(OkraStatus.PROCESSING);
 
         Query query = Query.query(criteria);
 
@@ -132,18 +132,18 @@ public class SpringMongoScheduler<T extends ScheduledItem> extends AbstractMongo
     @Override
     public void schedule(T item) {
         validateSchedule(item);
-        item.setStatus(ScheduledStatus.PENDING);
+        item.setStatus(OkraStatus.PENDING);
         mongoTemplate.save(item);
     }
 
     private void validateSchedule(T item) {
         if (item.getId() != null) {
             LOGGER.error("Impossible to schedule item because it already has an ID. Item: {}", item);
-            throw new SchedulerRuntimeException();
+            throw new OkraRuntimeException();
         }
         if (item.getRunDate() == null) {
             LOGGER.error("Impossible to schedule item because it doesn't have a schedule date. Item: {}", item);
-            throw new SchedulerRuntimeException();
+            throw new OkraRuntimeException();
         }
     }
 

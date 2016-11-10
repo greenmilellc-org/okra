@@ -1,8 +1,8 @@
-package mongo.scheduler.base;
+package okra.base;
 
 import java.time.LocalDateTime;
 
-public interface ScheduledItem {
+public interface OkraItem {
 
     String getId();
 
@@ -23,8 +23,8 @@ public interface ScheduledItem {
     /**
      * @return The current status of this scheduled item
      */
-    ScheduledStatus getStatus();
+    OkraStatus getStatus();
 
-    void setStatus(ScheduledStatus status);
+    void setStatus(OkraStatus status);
 
 }

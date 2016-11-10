@@ -1,8 +1,8 @@
-package mongo.scheduler.model;
+package okra.model;
 
 import lombok.Data;
-import mongo.scheduler.base.ScheduledItem;
-import mongo.scheduler.base.ScheduledStatus;
+import okra.base.OkraItem;
+import okra.base.OkraStatus;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  * @since 11/9/16 9:23 AM
  */
 @Data
-public class DefaultScheduledItem implements ScheduledItem {
+public class DefaultScheduledItem implements OkraItem {
 
     @Id
     private String id;
@@ -21,6 +21,6 @@ public class DefaultScheduledItem implements ScheduledItem {
 
     private LocalDateTime runDate;
 
-    private ScheduledStatus status;
+    private OkraStatus status;
 
 }

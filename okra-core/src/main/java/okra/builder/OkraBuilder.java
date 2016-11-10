@@ -1,15 +1,15 @@
-package mongo.scheduler.builder;
+package okra.builder;
 
-import mongo.scheduler.base.AbstractMongoScheduler;
-import mongo.scheduler.base.ScheduledItem;
+import okra.base.AbstractOkra;
+import okra.base.OkraItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public abstract class MongoSchedulerBuilder<T extends ScheduledItem> {
+public abstract class OkraBuilder<T extends OkraItem> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoSchedulerBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OkraBuilder.class);
 
     private String collection;
     private String database;
@@ -17,32 +17,32 @@ public abstract class MongoSchedulerBuilder<T extends ScheduledItem> {
     private Long expireDuration;
     private TimeUnit expireDurationUnit;
 
-    public MongoSchedulerBuilder<T> withScheduledItemClass(Class<T> scheduledItemClass) {
+    public OkraBuilder<T> withScheduledItemClass(Class<T> scheduledItemClass) {
         this.scheduleItemClass = scheduledItemClass;
         return this;
     }
 
-    public MongoSchedulerBuilder<T> withSchedulerCollectionName(String collectionName) {
+    public OkraBuilder<T> withSchedulerCollectionName(String collectionName) {
         this.collection = collectionName;
         return this;
     }
 
-    public MongoSchedulerBuilder<T> withDatabase(String database) {
+    public OkraBuilder<T> withDatabase(String database) {
         this.database = database;
         return this;
     }
 
-    public MongoSchedulerBuilder<T> withExpiration(long duration, TimeUnit durationUnit) {
+    public OkraBuilder<T> withExpiration(long duration, TimeUnit durationUnit) {
         this.expireDuration = duration;
         this.expireDurationUnit = durationUnit;
         return this;
     }
 
-    abstract AbstractMongoScheduler<T> build();
+    abstract AbstractOkra<T> build();
 
     abstract void validateConfiguration();
 
-    public AbstractMongoScheduler<T> validateAndBuild() {
+    public AbstractOkra<T> validateAndBuild() {
         validateConfiguration();
         return build();
     }

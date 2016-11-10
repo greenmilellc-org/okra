@@ -1,9 +1,9 @@
-package mongo.schedule;
+package okra;
 
 import com.mongodb.MongoClient;
-import mongo.scheduler.base.MongoScheduler;
-import mongo.scheduler.builder.SpringMongoSchedulerBuilder;
-import mongo.scheduler.model.DefaultScheduledItem;
+import okra.base.Okra;
+import okra.builder.SpringOkraBuilder;
+import okra.model.DefaultScheduledItem;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -31,7 +31,7 @@ public class BenchmarkTest {
             new GenericContainer("mongo:3.2")
                     .withExposedPorts(27017);
 
-    private static MongoScheduler<DefaultScheduledItem> scheduler;
+    private static Okra<DefaultScheduledItem> scheduler;
     private AtomicLong totalProcessedItems = new AtomicLong(0);
 
     @BeforeClass
@@ -41,7 +41,7 @@ public class BenchmarkTest {
                 BenchmarkTest.mongo.getContainerIpAddress(),
                 BenchmarkTest.mongo.getMappedPort(27017));
 
-        BenchmarkTest.scheduler = new SpringMongoSchedulerBuilder<DefaultScheduledItem>()
+        BenchmarkTest.scheduler = new SpringOkraBuilder<DefaultScheduledItem>()
                 .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
                 .withDatabase("schedulerBenchmark")
                 .withSchedulerCollectionName("schedulerCollection")
@@ -151,12 +151,12 @@ public class BenchmarkTest {
 
     public class SchedulePoller implements Runnable {
 
-        private final MongoScheduler<DefaultScheduledItem> scheduler;
+        private final Okra<DefaultScheduledItem> scheduler;
         private final long totalItems;
         private List<Double> deviationList = new ArrayList<>();
         private List<DefaultScheduledItem> processedItems = new ArrayList<>();
 
-        public SchedulePoller(MongoScheduler<DefaultScheduledItem> scheduler, long totalItems) {
+        public SchedulePoller(Okra<DefaultScheduledItem> scheduler, long totalItems) {
             this.scheduler = scheduler;
             this.totalItems = totalItems;
         }

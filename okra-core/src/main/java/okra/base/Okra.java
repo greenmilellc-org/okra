@@ -1,9 +1,9 @@
-package mongo.scheduler.base;
+package okra.base;
 
 import java.util.Map;
 import java.util.Optional;
 
-public interface MongoScheduler<T extends ScheduledItem> {
+public interface Okra<T extends OkraItem> {
 
     /**
      * Retrieves a scheduled item from the backend

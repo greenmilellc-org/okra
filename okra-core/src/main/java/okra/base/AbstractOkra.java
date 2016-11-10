@@ -1,14 +1,14 @@
-package mongo.scheduler.base;
+package okra.base;
 
-public abstract class AbstractMongoScheduler<T extends ScheduledItem>
-        implements MongoScheduler<T> {
+public abstract class AbstractOkra<T extends OkraItem>
+        implements Okra<T> {
 
     private final String collection;
 
     private final String database;
 
-    public AbstractMongoScheduler(String database,
-                                  String collection) {
+    public AbstractOkra(String database,
+                        String collection) {
         this.collection = collection;
         this.database = database;
         initDbIfNeeded();

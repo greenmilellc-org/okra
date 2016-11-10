@@ -1,9 +1,9 @@
-package mongo.scheduler;
+package okra;
 
 import com.mongodb.MongoClient;
-import mongo.scheduler.base.MongoScheduler;
-import mongo.scheduler.builder.SpringMongoSchedulerBuilder;
-import mongo.scheduler.model.DefaultScheduledItem;
+import okra.base.Okra;
+import okra.builder.SpringOkraBuilder;
+import okra.model.DefaultScheduledItem;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class EnsurePollDoesntRetrieveTheSameItemTwiceTest {
             new GenericContainer("mongo:3.2")
                     .withExposedPorts(27017);
 
-    private static MongoScheduler<DefaultScheduledItem> scheduler;
+    private static Okra<DefaultScheduledItem> scheduler;
 
     @BeforeClass
     public static void prepareScheduler() throws UnknownHostException {
@@ -32,7 +32,7 @@ public class EnsurePollDoesntRetrieveTheSameItemTwiceTest {
                 mongo.getContainerIpAddress(),
                 mongo.getMappedPort(27017));
 
-        scheduler = new SpringMongoSchedulerBuilder<DefaultScheduledItem>()
+        scheduler = new SpringOkraBuilder<DefaultScheduledItem>()
                 .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
                 .withDatabase("schedulerBenchmark")
                 .withSchedulerCollectionName("schedulerCollection")

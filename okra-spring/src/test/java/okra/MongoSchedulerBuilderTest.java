@@ -1,4 +1,4 @@
-package mongo.scheduler;
+package okra;
 
 import org.junit.Test;
 

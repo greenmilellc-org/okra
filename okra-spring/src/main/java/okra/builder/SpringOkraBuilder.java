@@ -1,28 +1,28 @@
-package mongo.scheduler.builder;
+package okra.builder;
 
-import mongo.scheduler.SpringMongoScheduler;
-import mongo.scheduler.base.AbstractMongoScheduler;
-import mongo.scheduler.base.ScheduledItem;
-import mongo.scheduler.exception.InvalidMongoSchedulerConfigurationException;
+import okra.SpringOkra;
+import okra.base.AbstractOkra;
+import okra.base.OkraItem;
+import okra.exception.InvalidOkraConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-public class SpringMongoSchedulerBuilder<T extends ScheduledItem> extends MongoSchedulerBuilder<T> {
+public class SpringOkraBuilder<T extends OkraItem> extends OkraBuilder<T> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpringMongoSchedulerBuilder.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringOkraBuilder.class);
 
     private MongoTemplate mongoTemplate;
 
     @Override
-    AbstractMongoScheduler<T> build() {
+    AbstractOkra<T> build() {
         validateConfiguration();
-        return new SpringMongoScheduler<>(mongoTemplate, getDatabase(),
+        return new SpringOkra<>(mongoTemplate, getDatabase(),
                 getCollection(), getExpireDuration(),
                 getExpireDurationUnit(), getScheduleItemClass());
     }
 
-    public SpringMongoSchedulerBuilder<T> withMongoTemplate(MongoTemplate mongoTemplate) {
+    public SpringOkraBuilder<T> withMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         return this;
     }
@@ -37,7 +37,7 @@ public class SpringMongoSchedulerBuilder<T extends ScheduledItem> extends MongoS
                             "[MongoTemplate not null? {}, Database: {}, Collection: {}]",
                     mongoTemplate != null, getDatabase(), getCollection());
 
-            throw new InvalidMongoSchedulerConfigurationException();
+            throw new InvalidOkraConfigurationException();
 
         }
     }
