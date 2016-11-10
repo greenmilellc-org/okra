@@ -3,18 +3,18 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>mongo-scheduler</artifactId>
-        <groupId>mongo-scheduler</groupId>
+        <artifactId>okra</artifactId>
+        <groupId>okra</groupId>
         <version>0.9-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>spring-mongo-scheduler</artifactId>
+    <artifactId>okra-spring</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>mongo-scheduler</groupId>
-            <artifactId>mongo-scheduler-core</artifactId>
+            <groupId>okra</groupId>
+            <artifactId>okra-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>

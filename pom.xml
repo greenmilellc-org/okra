@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>mongo-scheduler</groupId>
-    <artifactId>mongo-scheduler</artifactId>
+    <groupId>okra</groupId>
+    <artifactId>okra</artifactId>
     <packaging>pom</packaging>
     <version>0.9-SNAPSHOT</version>
     <modules>
-        <module>spring-mongo-scheduler</module>
-        <module>mongo-scheduler-core</module>
-        <module>schedulerbenchmarks</module>
+        <module>okra-spring</module>
+        <module>okra-core</module>
+        <module>okra-benchmarks</module>
     </modules>
 
     <dependencies>
