@@ -6,10 +6,10 @@ public class MongoSchedulerBuilderTest {
 
     @Test
     public void mongoSchedulerBuilderTest() {
-        MongoScheduler scheduler = new SpringMongoSchedulerBuilder()
-                .withDatabase("dbName")
-                .withDriver(null)
-                .withSchedulerCollectionName("schedulerCollection")
-                .build();
+//        MongoScheduler scheduler = new SpringMongoSchedulerBuilder()
+//                .withMongoTemplate(new MongoTemplate(null, "..."))
+//                .withDatabase("dbName")
+//                .withSchedulerCollectionName("schedulerCollection")
+//                .build();
     }
 }

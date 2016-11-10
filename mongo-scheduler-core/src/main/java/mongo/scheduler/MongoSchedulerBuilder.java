@@ -10,50 +10,40 @@ public abstract class MongoSchedulerBuilder<T extends ScheduledItem> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoSchedulerBuilder.class);
 
-    private MongoClient mongo;
     private String collection;
     private String database;
     private Class<T> scheduleItemClass;
     private Long expiraDuration;
     private TimeUnit expireDurationUnit;
 
-    public MongoSchedulerBuilder withDriver(MongoClient mongo) {
-        this.mongo = mongo;
-        return this;
-    }
-
-    public MongoSchedulerBuilder withScheduledItemClass(Class<T> scheduledItemClass) {
+    public MongoSchedulerBuilder<T> withScheduledItemClass(Class<T> scheduledItemClass) {
         this.scheduleItemClass = scheduledItemClass;
         return this;
     }
 
-    public MongoSchedulerBuilder withSchedulerCollectionName(String collectionName) {
+    public MongoSchedulerBuilder<T> withSchedulerCollectionName(String collectionName) {
         this.collection = collectionName;
         return this;
     }
 
-    public MongoSchedulerBuilder withDatabase(String database) {
+    public MongoSchedulerBuilder<T> withDatabase(String database) {
         this.database = database;
         return this;
     }
 
-    public MongoSchedulerBuilder withExpiration(long duration, TimeUnit durationUnit) {
+    public MongoSchedulerBuilder<T> withExpiration(long duration, TimeUnit durationUnit) {
         this.expiraDuration = duration;
         this.expireDurationUnit = durationUnit;
         return this;
     }
 
-    abstract AbstractMongoScheduler build();
+    abstract AbstractMongoScheduler<T> build();
 
     abstract void validateConfiguration();
 
-    public AbstractMongoScheduler validateAndBuild() {
+    public AbstractMongoScheduler<T> validateAndBuild() {
         validateConfiguration();
         return build();
-    }
-
-    public MongoClient getMongo() {
-        return mongo;
     }
 
     public String getCollection() {

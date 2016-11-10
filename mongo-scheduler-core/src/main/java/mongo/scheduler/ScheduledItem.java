@@ -15,7 +15,7 @@ public interface ScheduledItem {
      *
      * @return The date of the latest heartbeat
      */
-    LocalDateTime getLastHeartbeat();
+    LocalDateTime getHeartbeat();
 
     /**
      * The date this entry should run
@@ -28,5 +28,7 @@ public interface ScheduledItem {
      * @return The current status of this scheduled item
      */
     ScheduledStatus getStatus();
+
+    void setStatus(ScheduledStatus status);
 
 }

@@ -1,5 +1,6 @@
 package mongo.scheduler;
 
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -32,9 +33,26 @@ public interface MongoScheduler<T extends ScheduledItem> {
     Optional<T> heartbeat(T item);
 
     /**
+     * Heartbeat an item to prevent that other scheduled item consumers acquire this same item
+     * This operation also updates custom attributes
+     *
+     * @param item The item to heartbeat
+     * @return The updated item if success, otherwise an empty optional
+     */
+    Optional<T> heartbeatAndUpdateCustomAttrs(T item, Map<String, Object> attrs);
+
+    /**
      * Delete a scheduled item
      *
      * @param item The item to be deleted
      */
     void delete(T item);
+
+    /**
+     * Schedule an item
+     *
+     * @param item The item to schedule
+     */
+    void schedule(T item);
+
 }

@@ -17,7 +17,7 @@ public class DefaultScheduledItem implements ScheduledItem {
     @Id
     private String id;
 
-    private LocalDateTime lastHeartbeat;
+    private LocalDateTime heartbeat;
 
     private LocalDateTime runDate;
 

@@ -19,8 +19,9 @@ public class SpringMongoSchedulerBuilder<T extends ScheduledItem> extends MongoS
                 getExpireDurationUnit(), getScheduleItemClass());
     }
 
-    public void withMongoTemplate(MongoTemplate mongoTemplate) {
+    public SpringMongoSchedulerBuilder<T> withMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
+        return this;
     }
 
     @Override
