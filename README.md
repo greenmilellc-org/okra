@@ -15,7 +15,7 @@ Configure a scheduler
 public class MyMongoScheduler {
     
     private MongoScheduler scheduler;
-
+    ...
     public void initScheduler() {
         scheduler = new SpringMongoSchedulerBuilder<DefaultScheduledItem>()
                         .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
@@ -25,7 +25,7 @@ public class MyMongoScheduler {
                         .withScheduledItemClass(DefaultScheduledItem.class)
                         .validateAndBuild();        
     }
-    
+    ...    
 }
 ```
 
@@ -35,7 +35,7 @@ Then, use this scheduler to retrieve scheduled items...
 public class MyMongoScheduler {
     
     private MongoScheduler scheduler;
-    
+    ...    
     public void retrieveLoop() {
         while (running) {
             Optional<DefaultScheduledItem> scheduledOpt = scheduler.poll();
@@ -44,13 +44,13 @@ public class MyMongoScheduler {
                 }    
         }
     }
-    
+    ...    
 }
 ```
 
 
 ### License
-
+```
 MIT License
 
 Copyright (c) 2016 Fernando Nogueira
@@ -72,3 +72,4 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```                `
