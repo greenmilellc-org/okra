@@ -64,7 +64,6 @@ public class BenchmarkTest {
         LOGGER.info("Items scheduled.");
         LOGGER.info("Polling for items...");
 
-
         int receivedItems = 0;
 
         List<Double> deviationList = new ArrayList<>();
@@ -73,7 +72,7 @@ public class BenchmarkTest {
             Optional<DefaultScheduledItem> opt = scheduler.poll();
             if (opt.isPresent()) {
                 DefaultScheduledItem item = opt.get();
-                LOGGER.info("Scheduled item received...: {}", item);
+                LOGGER.debug("Scheduled item received...: {}", item);
                 receivedItems++;
                 LocalDateTime runDate = item.getRunDate();
                 double millisDiff = Math.abs(LocalDateTime.now().until(runDate, ChronoUnit.MILLIS));
@@ -167,7 +166,7 @@ public class BenchmarkTest {
                 Optional<DefaultScheduledItem> opt = scheduler.poll();
                 if (opt.isPresent()) {
                     DefaultScheduledItem item = opt.get();
-                    LOGGER.info("Scheduled item received...: {}", item);
+                    LOGGER.debug("Scheduled item received...: {}", item);
                     totalProcessedItems.incrementAndGet();
                     LocalDateTime runDate = item.getRunDate();
                     double millisDiff = Math.abs(LocalDateTime.now().until(runDate, ChronoUnit.MILLIS));
