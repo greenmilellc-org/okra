@@ -1,8 +1,8 @@
 package mongo.scheduler.model;
 
 import lombok.Data;
-import mongo.scheduler.ScheduledItem;
-import mongo.scheduler.ScheduledStatus;
+import mongo.scheduler.base.ScheduledItem;
+import mongo.scheduler.base.ScheduledStatus;
 import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;

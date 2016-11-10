@@ -1,11 +1,7 @@
-package mongo.scheduler;
+package mongo.scheduler.base;
 
 import java.time.LocalDateTime;
 
-/**
- * @author Fernando Nogueira
- * @since 11/8/16 7:35 PM
- */
 public interface ScheduledItem {
 
     String getId();

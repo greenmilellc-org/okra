@@ -1,5 +1,8 @@
 package mongo.scheduler;
 
+import mongo.scheduler.base.AbstractMongoScheduler;
+import mongo.scheduler.base.ScheduledItem;
+import mongo.scheduler.base.ScheduledStatus;
 import mongo.scheduler.exception.SchedulerRuntimeException;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;

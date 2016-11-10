@@ -1,9 +1,5 @@
-package mongo.scheduler;
+package mongo.scheduler.base;
 
-/**
- * @author Fernando Nogueira
- * @since 11/8/16 7:27 PM
- */
 public abstract class AbstractMongoScheduler<T extends ScheduledItem>
         implements MongoScheduler<T> {
 

@@ -1,5 +1,8 @@
-package mongo.scheduler;
+package mongo.scheduler.builder;
 
+import mongo.scheduler.SpringMongoScheduler;
+import mongo.scheduler.base.AbstractMongoScheduler;
+import mongo.scheduler.base.ScheduledItem;
 import mongo.scheduler.exception.InvalidMongoSchedulerConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +15,10 @@ public class SpringMongoSchedulerBuilder<T extends ScheduledItem> extends MongoS
     private MongoTemplate mongoTemplate;
 
     @Override
-    public AbstractMongoScheduler<T> build() {
+    AbstractMongoScheduler<T> build() {
         validateConfiguration();
         return new SpringMongoScheduler<>(mongoTemplate, getDatabase(),
-                getCollection(), getExpiraDuration(),
+                getCollection(), getExpireDuration(),
                 getExpireDurationUnit(), getScheduleItemClass());
     }
 

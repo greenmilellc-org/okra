@@ -1,6 +1,7 @@
-package mongo.scheduler;
+package mongo.scheduler.builder;
 
-import com.mongodb.MongoClient;
+import mongo.scheduler.base.AbstractMongoScheduler;
+import mongo.scheduler.base.ScheduledItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +14,7 @@ public abstract class MongoSchedulerBuilder<T extends ScheduledItem> {
     private String collection;
     private String database;
     private Class<T> scheduleItemClass;
-    private Long expiraDuration;
+    private Long expireDuration;
     private TimeUnit expireDurationUnit;
 
     public MongoSchedulerBuilder<T> withScheduledItemClass(Class<T> scheduledItemClass) {
@@ -32,7 +33,7 @@ public abstract class MongoSchedulerBuilder<T extends ScheduledItem> {
     }
 
     public MongoSchedulerBuilder<T> withExpiration(long duration, TimeUnit durationUnit) {
-        this.expiraDuration = duration;
+        this.expireDuration = duration;
         this.expireDurationUnit = durationUnit;
         return this;
     }
@@ -58,8 +59,8 @@ public abstract class MongoSchedulerBuilder<T extends ScheduledItem> {
         return scheduleItemClass;
     }
 
-    public Long getExpiraDuration() {
-        return expiraDuration;
+    public Long getExpireDuration() {
+        return expireDuration;
     }
 
     public TimeUnit getExpireDurationUnit() {

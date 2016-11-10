@@ -1,8 +1,8 @@
 package mongo.schedule;
 
 import com.mongodb.MongoClient;
-import mongo.scheduler.MongoScheduler;
-import mongo.scheduler.SpringMongoSchedulerBuilder;
+import mongo.scheduler.base.MongoScheduler;
+import mongo.scheduler.builder.SpringMongoSchedulerBuilder;
 import mongo.scheduler.model.DefaultScheduledItem;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -25,15 +25,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class BenchmarkTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BenchmarkTest.class);
-
-    private static MongoScheduler<DefaultScheduledItem> scheduler;
-
-    private AtomicLong totalProcessedItems = new AtomicLong(0);
-
     @ClassRule
     public static GenericContainer mongo =
             new GenericContainer("mongo:3.2")
                     .withExposedPorts(27017);
+    private static MongoScheduler<DefaultScheduledItem> scheduler;
+    private AtomicLong totalProcessedItems = new AtomicLong(0);
 
     @BeforeClass
     public static void prepareMongo() throws UnknownHostException {

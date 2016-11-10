@@ -1,12 +1,8 @@
-package mongo.scheduler;
+package mongo.scheduler.base;
 
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * @author Fernando Nogueira
- * @since 11/9/16 9:43 AM
- */
 public interface MongoScheduler<T extends ScheduledItem> {
 
     /**
