@@ -5,11 +5,14 @@ import mongo.scheduler.MongoScheduler;
 import mongo.scheduler.SpringMongoSchedulerBuilder;
 import mongo.scheduler.model.DefaultScheduledItem;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.testcontainers.containers.GenericContainer;
 
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
@@ -18,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-@Ignore
+@RunWith(JUnit4.class)
 public class BenchmarkTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BenchmarkTest.class);
@@ -27,10 +30,17 @@ public class BenchmarkTest {
 
     private AtomicLong totalProcessedItems = new AtomicLong(0);
 
+    @ClassRule
+    public static GenericContainer mongo =
+            new GenericContainer("mongo:3.2")
+                    .withExposedPorts(27017);
+
     @BeforeClass
     public static void prepareMongo() throws UnknownHostException {
 
-        MongoClient client = new MongoClient("192.168.99.100", 32768);
+        MongoClient client = new MongoClient(
+                BenchmarkTest.mongo.getContainerIpAddress(),
+                BenchmarkTest.mongo.getMappedPort(27017));
 
         BenchmarkTest.scheduler = new SpringMongoSchedulerBuilder<DefaultScheduledItem>()
                 .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
