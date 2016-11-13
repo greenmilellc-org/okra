@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Okra by fernandonogueira</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Okra</h1>
+      <h2 class="project-tagline">Job Scheduler that uses MongoDB as backend</h2>
+      <a href="https://github.com/fernandonogueira/okra" class="btn">View on GitHub</a>
+      <a href="https://github.com/fernandonogueira/okra/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/fernandonogueira/okra/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="okra" class="anchor" href="#okra" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Okra</h1>
+
+<p>A simple and scalable Scheduler that uses MongoDB as backend</p>
+
+<h3>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Requirements</h3>
+
+<ul>
+<li>Java 8</li>
+<li>MongoDB</li>
+</ul>
+
+<h4>
+<a id="note" class="anchor" href="#note" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Note</h4>
+
+<p>Right now Okra was only one module that requires Spring Data MongoDB to work, but you can send a Pull Request any time creating a new maven module (like okra-spring) that requires only the raw MongoDB Driver.</p>
+
+<h3>
+<a id="binaries" class="anchor" href="#binaries" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Binaries</h3>
+
+<p><a href="https://jitpack.io/#fernandonogueira/okra"><img src="https://jitpack.io/v/fernandonogueira/okra.svg" alt=""></a></p>
+
+<h4>
+<a id="gradle" class="anchor" href="#gradle" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle</h4>
+
+<p>build.gradle</p>
+
+<div class="highlight highlight-source-groovy"><pre>    allprojects {
+        repositories {
+            <span class="pl-k">..</span>.
+            maven { url <span class="pl-s"><span class="pl-pds">"</span>https://jitpack.io<span class="pl-pds">"</span></span> }
+        }
+    }</pre></div>
+
+<div class="highlight highlight-source-groovy"><pre>    dependencies {
+        compile <span class="pl-s"><span class="pl-pds">'</span>com.github.fernandonogueira.okra:okra-spring:v0.1-alpha<span class="pl-pds">'</span></span>
+    }</pre></div>
+
+<h4>
+<a id="maven" class="anchor" href="#maven" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Maven</h4>
+
+<div class="highlight highlight-text-xml"><pre>    &lt;<span class="pl-ent">dependency</span>&gt;
+        &lt;<span class="pl-ent">groupId</span>&gt;com.github.fernandonogueira.okra&lt;/<span class="pl-ent">groupId</span>&gt;
+        &lt;<span class="pl-ent">artifactId</span>&gt;okra-spring&lt;/<span class="pl-ent">artifactId</span>&gt;
+        &lt;<span class="pl-ent">version</span>&gt;v0.1-alpha&lt;/<span class="pl-ent">version</span>&gt;
+    &lt;/<span class="pl-ent">dependency</span>&gt;
+
+    &lt;<span class="pl-ent">repositories</span>&gt;
+        &lt;<span class="pl-ent">repository</span>&gt;
+            &lt;<span class="pl-ent">id</span>&gt;jitpack.io&lt;/<span class="pl-ent">id</span>&gt;
+            &lt;<span class="pl-ent">url</span>&gt;https://jitpack.io&lt;/<span class="pl-ent">url</span>&gt;
+        &lt;/<span class="pl-ent">repository</span>&gt;
+    &lt;/<span class="pl-ent">repositories</span>&gt;</pre></div>
+
+<h3>
+<a id="quick-start" class="anchor" href="#quick-start" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Quick start</h3>
+
+<p>Configure a scheduler</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyScheduler</span> {
+
+    <span class="pl-k">private</span> <span class="pl-smi">Okra</span> okra;
+    <span class="pl-c1">...</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">initScheduler</span>() {
+        okra <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-k">OkraSpringBuilder&lt;<span class="pl-smi">DefaultOkraItem</span>&gt;</span>()
+                        .withMongoTemplate(<span class="pl-k">new</span> <span class="pl-smi">MongoTemplate</span>(client, <span class="pl-s"><span class="pl-pds">"</span>schedulerBenchmark<span class="pl-pds">"</span></span>))
+                        .withDatabase(<span class="pl-s"><span class="pl-pds">"</span>schedulerBenchmark<span class="pl-pds">"</span></span>)
+                        .withSchedulerCollectionName(<span class="pl-s"><span class="pl-pds">"</span>schedulerCollection<span class="pl-pds">"</span></span>)
+                        .withExpiration(<span class="pl-c1">5</span>, <span class="pl-smi">TimeUnit</span><span class="pl-c1"><span class="pl-k">.</span>MINUTES</span>)
+                        .withScheduledItemClass(<span class="pl-smi">DefaultOkraItem</span><span class="pl-k">.</span>class)
+                        .validateAndBuild();        
+    }
+    <span class="pl-c1">...</span>    
+}</pre></div>
+
+<p>Then, use this scheduler to retrieve scheduled items...</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MyScheduler</span> {
+
+    <span class="pl-k">private</span> <span class="pl-smi">Okra</span> okra;
+    <span class="pl-c1">...</span>    
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">retrieveLoop</span>() {
+        <span class="pl-k">while</span> (running) {
+            <span class="pl-k">Optional&lt;<span class="pl-smi">DefaultOkraItem</span>&gt;</span> scheduledOpt <span class="pl-k">=</span> okra<span class="pl-k">.</span>poll();
+                <span class="pl-k">if</span> (scheduled<span class="pl-k">.</span>isPresent()) {
+                    doSomeWork(scheduledOpt<span class="pl-k">.</span>get());                
+                }    
+        }
+    }
+    <span class="pl-c1">...</span>    
+}</pre></div>
+
+<h4>
+<a id="build" class="anchor" href="#build" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Build</h4>
+
+<p>To build:</p>
+
+<div class="highlight highlight-source-shell"><pre>$ git clone git@github.com:fernandonogueira/okra.git
+$ <span class="pl-c1">cd</span> okra
+$ mvn install -DskipTests</pre></div>
+
+<p><a href="https://travis-ci.org/fernandonogueira/okra"><img src="https://travis-ci.org/fernandonogueira/okra.svg?branch=master" alt="Build Status"></a></p>
+
+<h3>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>LICENSE</h3>
+
+<pre><code>MIT License
+
+Copyright (c) 2016 Fernando Nogueira
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/fernandonogueira/okra">Okra</a> is maintained by <a href="https://github.com/fernandonogueira">fernandonogueira</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
