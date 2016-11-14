@@ -15,13 +15,18 @@ public class OkraSpringBuilder<T extends OkraItem> extends OkraBuilder<T> {
     private MongoTemplate mongoTemplate;
 
     @Override
-    AbstractOkra<T> build() {
+    public AbstractOkra<T> build() {
         validateConfiguration();
         return new OkraSpring<>(mongoTemplate, getDatabase(),
                 getCollection(), getExpireDuration(),
                 getExpireDurationUnit(), getScheduleItemClass());
     }
 
+    /**
+     * Set mongo template that will be used by Okra
+     * @param mongoTemplate the mongo template
+     * @return this builder
+     */
     public OkraSpringBuilder<T> withMongoTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         return this;

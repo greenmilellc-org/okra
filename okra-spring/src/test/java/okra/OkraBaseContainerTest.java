@@ -11,7 +11,7 @@ import org.testcontainers.containers.GenericContainer;
 import java.net.UnknownHostException;
 import java.util.concurrent.TimeUnit;
 
-public class OkraBaseContainerTest {
+public abstract class OkraBaseContainerTest {
 
     @ClassRule
     public static GenericContainer mongo =
@@ -29,7 +29,8 @@ public class OkraBaseContainerTest {
                 .withSchedulerCollectionName("schedulerCollection")
                 .withExpiration(5, TimeUnit.MINUTES)
                 .withScheduledItemClass(DefaultOkraItem.class)
-                .validateAndBuild();
+                .build();
+
     }
 
 }

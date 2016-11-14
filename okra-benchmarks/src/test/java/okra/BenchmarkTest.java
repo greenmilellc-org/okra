@@ -47,7 +47,7 @@ public class BenchmarkTest {
                 .withSchedulerCollectionName("schedulerCollection")
                 .withExpiration(5, TimeUnit.MINUTES)
                 .withScheduledItemClass(DefaultOkraItem.class)
-                .validateAndBuild();
+                .build();
     }
 
     @Test

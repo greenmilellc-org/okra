@@ -38,14 +38,9 @@ public abstract class OkraBuilder<T extends OkraItem> {
         return this;
     }
 
-    abstract AbstractOkra<T> build();
+    public abstract AbstractOkra<T> build();
 
     abstract void validateConfiguration();
-
-    public AbstractOkra<T> validateAndBuild() {
-        validateConfiguration();
-        return build();
-    }
 
     public String getCollection() {
         return collection;

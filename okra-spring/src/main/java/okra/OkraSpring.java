@@ -24,18 +24,18 @@ public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OkraSpring.class);
 
     private final MongoTemplate mongoTemplate;
-    private final long defaultheartbeatExpirationMillis;
+    private final long defaultHeartbeatExpirationMillis;
     private final Class<T> scheduleItemClass;
 
     public OkraSpring(MongoTemplate mongoTemplate,
                       String database,
                       String collection,
-                      long defaultheartbeatExpiration,
-                      TimeUnit defaultheartbeatExpirationUnit,
+                      long defaultHeartbeatExpiration,
+                      TimeUnit defaultHeartbeatExpirationUnit,
                       Class<T> scheduleItemClass) {
         super(database, collection);
         this.mongoTemplate = mongoTemplate;
-        this.defaultheartbeatExpirationMillis = defaultheartbeatExpirationUnit.toMillis(defaultheartbeatExpiration);
+        this.defaultHeartbeatExpirationMillis = defaultHeartbeatExpirationUnit.toMillis(defaultHeartbeatExpiration);
         this.scheduleItemClass = scheduleItemClass;
     }
 
@@ -48,7 +48,7 @@ public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
 
         LocalDateTime expiredheartbeatDate = LocalDateTime
                 .now()
-                .minus(defaultheartbeatExpirationMillis, ChronoUnit.MILLIS);
+                .minus(defaultHeartbeatExpirationMillis, ChronoUnit.MILLIS);
         Criteria mainOr = generatePollCriteria(expiredheartbeatDate);
 
         Update update = Update
@@ -63,20 +63,19 @@ public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
         return Optional.ofNullable(mongoTemplate.findAndModify(query, update, opts, scheduleItemClass));
     }
 
-    private Criteria generatePollCriteria(LocalDateTime expiredheartbeatDate) {
-        Criteria heartbeatCriteria = new Criteria()
-                .andOperator(
-                        Criteria.where("status").is(OkraStatus.PROCESSING),
-                        new Criteria().orOperator(
-                                Criteria.where("heartbeat").lt(expiredheartbeatDate),
-                                Criteria.where("heartbeat").is(null)
-                        ));
+    private Criteria generatePollCriteria(LocalDateTime expiredHeartbeatDate) {
 
         Criteria pendingCriteria = new Criteria().andOperator(
                 Criteria.where("runDate")
                         .lt(LocalDateTime.now()),
-                Criteria.where("status").is(OkraStatus.PENDING)
-        );
+                Criteria.where("status").is(OkraStatus.PENDING));
+
+        Criteria heartbeatCriteria = new Criteria()
+                .andOperator(
+                        Criteria.where("status").is(OkraStatus.PROCESSING),
+                        new Criteria().orOperator(
+                                Criteria.where("heartbeat").lt(expiredHeartbeatDate),
+                                Criteria.where("heartbeat").is(null)));
 
         return new Criteria().orOperator(pendingCriteria, heartbeatCriteria);
     }
@@ -99,10 +98,10 @@ public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
             return Optional.empty();
         }
 
-        Criteria criteria = Criteria.where("_id")
-                .is(new ObjectId(item.getId()))
-                .and("heartbeat").is(item.getHeartbeat())
-                .and("status").is(OkraStatus.PROCESSING);
+        Criteria criteria =
+                Criteria.where("_id").is(new ObjectId(item.getId()))
+                        .and("status").is(OkraStatus.PROCESSING)
+                        .and("heartbeat").is(item.getHeartbeat());
 
         Query query = Query.query(criteria);
 
