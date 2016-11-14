@@ -45,7 +45,7 @@ public class SingleThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
 
     @BeforeClass
     public static void init() throws UnknownHostException {
-        scheduler = prepareDefaultScheduler();
+        scheduler = prepareDefaultMongo32OkraSpring();
     }
 
     @Test

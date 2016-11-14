@@ -43,12 +43,15 @@ public class MultiThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MultiThreadBenchmarkTest.class);
 
-    private static Okra<DefaultOkraItem> scheduler;
+    private static Okra<DefaultOkraItem> okraSpringMongo32;
+    private static Okra<DefaultOkraItem> okraSpringMongo34;
+
     private AtomicLong totalProcessedItems = new AtomicLong(0);
 
     @BeforeClass
     public static void init() throws UnknownHostException {
-        scheduler = prepareDefaultScheduler();
+        okraSpringMongo32 = prepareDefaultMongo32OkraSpring();
+        okraSpringMongo34 = prepareDefaultMongo34OkraSpring();
     }
 
     private double calcAvgDiff(List<Double> deviationList) {
@@ -57,8 +60,18 @@ public class MultiThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
     }
 
     @Test
-    public void benchmark30ThreadsTest() throws InterruptedException, ExecutionException {
+    public void benchmarkMongo32With30ThreadsTest() throws InterruptedException, ExecutionException {
+        LOGGER.info("Starting benchmark tests using Mongo 3.2...");
+        runBenchmarkTests(okraSpringMongo32);
+    }
 
+    @Test
+    public void benchmarkMongo34With30ThreadsTest() throws InterruptedException, ExecutionException {
+        LOGGER.info("Starting benchmark tests using Mongo 3.4...");
+        runBenchmarkTests(okraSpringMongo34);
+    }
+
+    private void runBenchmarkTests(Okra<DefaultOkraItem> okra) throws InterruptedException, ExecutionException {
         int totalItems = 3000;
         LOGGER.info("Scheduling {} items... (0 to 30 secs ahead creation)", totalItems);
 
@@ -66,7 +79,7 @@ public class MultiThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
         for (int i = 0; i < totalItems; i++) {
             DefaultOkraItem item = new DefaultOkraItem();
             item.setRunDate(LocalDateTime.now().plusSeconds(random.nextInt(31)));
-            scheduler.schedule(item);
+            okra.schedule(item);
         }
 
         LOGGER.info("Items scheduled.");
@@ -77,7 +90,7 @@ public class MultiThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
         List<Future<?>> futures = new ArrayList<>();
         List<SchedulePoller> pollerList = new ArrayList<>();
         for (int i = 0; i < threadCount; i++) {
-            SchedulePoller poller = new SchedulePoller(scheduler, totalItems);
+            SchedulePoller poller = new SchedulePoller(okra, totalItems);
             pollerList.add(poller);
             futures.add(executor.submit(poller));
         }
@@ -101,9 +114,8 @@ public class MultiThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
         LOGGER.info("Avg diff: [{}]", calcAvgDiff(deviationList));
 
         LOGGER.info("Removing schedules...");
-        processedItems.parallelStream().forEach(i -> scheduler.delete(i));
+        processedItems.parallelStream().forEach(okra::delete);
         LOGGER.info("Done!");
-
     }
 
     public class SchedulePoller implements Runnable {
@@ -133,7 +145,7 @@ public class MultiThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
                     this.processedItems.add(item);
                 } else {
                     try {
-                        Thread.sleep(100);
+                        Thread.sleep(50);
                     } catch (InterruptedException e) {
                         LOGGER.error("Error while sleeping");
                     }
