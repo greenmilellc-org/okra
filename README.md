@@ -27,7 +27,7 @@ build.gradle
 
 ```groovy
     dependencies {
-        compile 'com.github.fernandonogueira.okra:okra-spring:v0.1-alpha'
+        compile 'com.github.fernandonogueira.okra:okra-spring:x.y.z'
     }
 ```
 
@@ -36,7 +36,7 @@ build.gradle
 	<dependency>
 	    <groupId>com.github.fernandonogueira.okra</groupId>
 	    <artifactId>okra-spring</artifactId>
-	    <version>v0.1-alpha</version>
+	    <version>x.y.z</version>
 	</dependency>
 
 	<repositories>
