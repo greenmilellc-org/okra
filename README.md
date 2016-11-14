@@ -1,6 +1,7 @@
 # Okra
 A simple and scalable Scheduler that uses MongoDB as backend
 
+[![codecov](https://codecov.io/gh/fernandonogueira/okra/branch/master/graph/badge.svg)](https://codecov.io/gh/fernandonogueira/okra)
 
 ### Requirements
 
