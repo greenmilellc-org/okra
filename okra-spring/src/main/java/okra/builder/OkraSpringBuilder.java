@@ -46,6 +46,7 @@ public class OkraSpringBuilder<T extends OkraItem> extends OkraBuilder<T> {
 
     /**
      * Set mongo template that will be used by Okra
+     *
      * @param mongoTemplate the mongo template
      * @return this builder
      */

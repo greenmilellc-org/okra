@@ -22,97 +22,33 @@
 
 package okra;
 
-import com.mongodb.MongoClient;
 import okra.base.Okra;
-import okra.builder.OkraSpringBuilder;
 import okra.model.DefaultOkraItem;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.testcontainers.containers.GenericContainer;
 
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicLong;
 
-@RunWith(JUnit4.class)
-public class BenchmarkTest {
+public class MultiThreadBenchmarkTest extends OkraBaseBenchmarkContainerTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BenchmarkTest.class);
-
-    @ClassRule
-    public static GenericContainer mongo =
-            new GenericContainer("mongo:3.2")
-                    .withExposedPorts(27017);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MultiThreadBenchmarkTest.class);
 
     private static Okra<DefaultOkraItem> scheduler;
     private AtomicLong totalProcessedItems = new AtomicLong(0);
 
     @BeforeClass
-    public static void prepareMongo() throws UnknownHostException {
-
-        MongoClient client = new MongoClient(
-                BenchmarkTest.mongo.getContainerIpAddress(),
-                BenchmarkTest.mongo.getMappedPort(27017));
-
-        BenchmarkTest.scheduler = new OkraSpringBuilder<DefaultOkraItem>()
-                .withMongoTemplate(new MongoTemplate(client, "schedulerBenchmark"))
-                .withDatabase("schedulerBenchmark")
-                .withSchedulerCollectionName("schedulerCollection")
-                .withExpiration(5, TimeUnit.MINUTES)
-                .withScheduledItemClass(DefaultOkraItem.class)
-                .build();
-    }
-
-    @Test
-    public void benchmarkSingleThreadTest() throws InterruptedException {
-
-        int totalItems = 2000;
-        LOGGER.info("Scheduling {} items... (1 min ahead creation)", totalItems);
-
-
-        for (int i = 0; i < totalItems; i++) {
-            DefaultOkraItem item = new DefaultOkraItem();
-            item.setRunDate(LocalDateTime.now().plusSeconds(30));
-            scheduler.schedule(item);
-        }
-
-        LOGGER.info("Items scheduled.");
-        LOGGER.info("Polling for items...");
-
-        int receivedItems = 0;
-
-        List<Double> deviationList = new ArrayList<>();
-        List<DefaultOkraItem> processedItems = new ArrayList<>();
-        while (receivedItems < totalItems) {
-            Optional<DefaultOkraItem> opt = scheduler.poll();
-            if (opt.isPresent()) {
-                DefaultOkraItem item = opt.get();
-                LOGGER.debug("Scheduled item received...: {}", item);
-                receivedItems++;
-                LocalDateTime runDate = item.getRunDate();
-                double millisDiff = Math.abs(LocalDateTime.now().until(runDate, ChronoUnit.MILLIS));
-                deviationList.add(millisDiff);
-                processedItems.add(item);
-            } else {
-                Thread.sleep(500);
-            }
-        }
-
-        LOGGER.info("Avg diff: [{}]", calcAvgDiff(deviationList));
-
-        LOGGER.info("Removing schedules...");
-        processedItems.parallelStream().forEach(i -> scheduler.delete(i));
-        LOGGER.info("Done!");
-
+    public static void init() throws UnknownHostException {
+        scheduler = prepareDefaultScheduler();
     }
 
     private double calcAvgDiff(List<Double> deviationList) {
@@ -121,11 +57,10 @@ public class BenchmarkTest {
     }
 
     @Test
-    public void benchmark10ThreadsTest() throws InterruptedException, ExecutionException {
+    public void benchmark30ThreadsTest() throws InterruptedException, ExecutionException {
 
         int totalItems = 3000;
         LOGGER.info("Scheduling {} items... (0 to 30 secs ahead creation)", totalItems);
-
 
         Random random = new Random();
         for (int i = 0; i < totalItems; i++) {
@@ -205,7 +140,7 @@ public class BenchmarkTest {
                 }
             }
 
-            LOGGER.info("Poller completed!");
+            LOGGER.debug("Poller completed!");
 
         }
 
