@@ -22,38 +22,34 @@
 
 package okra;
 
+import okra.base.Okra;
+import okra.exception.OkraRuntimeException;
 import okra.model.DefaultOkraItem;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
+public class ScheduleTest extends OkraBaseContainerTest {
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class EnsurePollDoesntRetrieveTheSameItemTwiceTest extends OkraBaseContainerTest {
-
-    @Test
-    public void ensurePollDoesntRetrieveTheSameItemTwiceTest() {
-        given_that_an_item_was_scheduled();
-
-        Optional<DefaultOkraItem> retrievedOpt = getDefaultOkra().poll();
-
-        assertThat(retrievedOpt.isPresent()).isTrue();
-
-        DefaultOkraItem item = retrievedOpt.get();
-
-        Optional<DefaultOkraItem> optThatShouldBeEmpty = getDefaultOkra().poll();
-
-        assertThat(optThatShouldBeEmpty.isPresent()).isFalse();
-
-        // Then... Delete acquired item
-        getDefaultOkra().delete(item);
+    @Test(expected = OkraRuntimeException.class)
+    public void shouldNotScheduleIfRunDateIsNull() {
+        DefaultOkraItem item = new DefaultOkraItem();
+        scheduleWithOkra(okraSpringMongo32, item);
+        item = new DefaultOkraItem();
+        scheduleWithOkra(okraSpringMongo34, item);
     }
 
-    private void given_that_an_item_was_scheduled() {
+    @Test(expected = OkraRuntimeException.class)
+    public void shouldNotScheduleIfIdIsNotNull() {
         DefaultOkraItem item = new DefaultOkraItem();
-        item.setRunDate(LocalDateTime.now().minusNanos(100));
-        getDefaultOkra().schedule(item);
+        item.setId("123456");
+        scheduleWithOkra(okraSpringMongo32, item);
+
+        item = new DefaultOkraItem();
+        item.setId("123456");
+        scheduleWithOkra(okraSpringMongo34, item);
+    }
+
+    private void scheduleWithOkra(Okra<DefaultOkraItem> okra, DefaultOkraItem item) {
+        okra.schedule(item);
     }
 
 }

@@ -24,10 +24,8 @@ package okra;
 
 import okra.base.Okra;
 import okra.model.DefaultOkraItem;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -37,20 +35,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class EnsureHearbeatTest extends OkraBaseContainerTest {
 
-    private static Okra<DefaultOkraItem> scheduler;
-
-    @BeforeClass
-    public static void init() throws UnknownHostException {
-        scheduler = prepareDefaultScheduler();
-    }
-
     @Test
     public void ensureHeartbeatTest() {
 
         given_an_item_is_scheduled();
 
         // Retrieve the item
-        Optional<DefaultOkraItem> itemOpt = scheduler.poll();
+        Optional<DefaultOkraItem> itemOpt = getDefaultOkra().poll();
 
         assertThat(itemOpt.isPresent()).isTrue();
 
@@ -62,7 +53,7 @@ public class EnsureHearbeatTest extends OkraBaseContainerTest {
                 .isLessThan(TimeUnit.MILLISECONDS.toNanos(100));
 
         // then, try to heartbeat it
-        Optional<DefaultOkraItem> itemHeartbeatOpt = scheduler.heartbeat(item);
+        Optional<DefaultOkraItem> itemHeartbeatOpt = getDefaultOkra().heartbeat(item);
 
         // Must be succeeded
         assertThat(itemHeartbeatOpt.isPresent()).isTrue();
@@ -79,7 +70,10 @@ public class EnsureHearbeatTest extends OkraBaseContainerTest {
     private void given_an_item_is_scheduled() {
         DefaultOkraItem item = new DefaultOkraItem();
         item.setRunDate(LocalDateTime.now().minusSeconds(1));
-        scheduler.schedule(item);
+        getDefaultOkra().schedule(item);
     }
 
+    public Okra<DefaultOkraItem> getDefaultOkra() {
+        return okraSpringMongo32;
+    }
 }

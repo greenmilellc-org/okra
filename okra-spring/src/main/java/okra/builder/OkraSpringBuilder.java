@@ -59,11 +59,15 @@ public class OkraSpringBuilder<T extends OkraItem> extends OkraBuilder<T> {
     public void validateConfiguration() {
         if (mongoTemplate == null || getCollection() == null
                 || getDatabase() == null || getCollection().isEmpty()
-                || getDatabase().isEmpty()) {
+                || getDatabase().isEmpty()
+                || getExpireDuration() == null
+                || getExpireDurationUnit() == null) {
             LOGGER.error("Invalid MongoScheduler configuration. " +
                             "Please verify params: " +
-                            "[MongoTemplate not null? {}, Database: {}, Collection: {}]",
-                    mongoTemplate != null, getDatabase(), getCollection());
+                            "[MongoTemplate not null? {}, Database: {}, " +
+                            "Collection: {}, ExpireTime: {}, ExpireTimeUnit: {}]",
+                    mongoTemplate != null, getDatabase(), getCollection(),
+                    getExpireDuration(), getExpireDurationUnit());
 
             throw new InvalidOkraConfigurationException();
 

@@ -22,16 +22,53 @@
 
 package okra;
 
+import com.mongodb.MongoClient;
+import okra.base.Okra;
+import okra.base.OkraItem;
+import okra.builder.OkraSpringBuilder;
+import okra.exception.InvalidOkraConfigurationException;
 import org.junit.Test;
+import org.springframework.data.mongodb.core.MongoTemplate;
+
+import java.net.UnknownHostException;
+import java.util.concurrent.TimeUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OkraBuilderTest {
 
-    @Test
-    public void mongoSchedulerBuilderTest() {
-//        MongoScheduler scheduler = new SpringMongoSchedulerBuilder()
-//                .withMongoTemplate(new MongoTemplate(null, "..."))
-//                .withDatabase("dbName")
-//                .withSchedulerCollectionName("schedulerCollection")
-//                .build();
+    @Test(expected = InvalidOkraConfigurationException.class)
+    public void shouldValidateNullMongoTemplate() {
+        Okra<OkraItem> okra = new OkraSpringBuilder<>()
+                .withDatabase("dbName")
+                .withSchedulerCollectionName("schedulerCollection")
+                .build();
     }
+
+
+    @Test(expected = InvalidOkraConfigurationException.class)
+    public void shouldValidateNullCollectionName() throws UnknownHostException {
+
+        MongoClient client = new MongoClient("localhost");
+
+        Okra<OkraItem> okra = new OkraSpringBuilder<>()
+                .withMongoTemplate(new MongoTemplate(client, "dbName"))
+                .withDatabase("dbName")
+                .build();
+    }
+
+    @Test
+    public void shouldCreateNewOkra() throws UnknownHostException {
+        MongoClient client = new MongoClient("localhost");
+
+        Okra<OkraItem> okra = new OkraSpringBuilder<>()
+                .withMongoTemplate(new MongoTemplate(client, "dbName"))
+                .withDatabase("dbName")
+                .withSchedulerCollectionName("testCollection")
+                .withExpiration(5, TimeUnit.MINUTES)
+                .build();
+
+        assertThat(okra).isNotNull();
+    }
+
 }

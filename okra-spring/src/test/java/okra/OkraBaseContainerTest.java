@@ -26,6 +26,7 @@ import com.mongodb.MongoClient;
 import okra.base.Okra;
 import okra.builder.OkraSpringBuilder;
 import okra.model.DefaultOkraItem;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.testcontainers.containers.GenericContainer;
@@ -36,23 +37,56 @@ import java.util.concurrent.TimeUnit;
 public abstract class OkraBaseContainerTest {
 
     @ClassRule
-    public static GenericContainer mongo =
+    public static GenericContainer mongo32Container =
             new GenericContainer("mongo:3.2")
                     .withExposedPorts(27017);
 
-    public static Okra<DefaultOkraItem> prepareDefaultScheduler() throws UnknownHostException {
+    @ClassRule
+    public static GenericContainer mongo34Container =
+            new GenericContainer("mongo:3.4")
+                    .withExposedPorts(27017);
+
+    static Okra<DefaultOkraItem> okraSpringMongo32;
+    static Okra<DefaultOkraItem> okraSpringMongo34;
+
+    @BeforeClass
+    public static void init() throws UnknownHostException {
+        okraSpringMongo32 = prepareDefaultMongo32OkraSpring();
+        okraSpringMongo34 = prepareDefaultMongo34OkraSpring();
+    }
+
+    public static Okra<DefaultOkraItem> prepareDefaultMongo32OkraSpring() throws UnknownHostException {
         MongoClient client = new MongoClient(
-                mongo.getContainerIpAddress(),
-                mongo.getMappedPort(27017));
+                mongo32Container.getContainerIpAddress(),
+                mongo32Container.getMappedPort(27017));
 
         return new OkraSpringBuilder<DefaultOkraItem>()
-                .withMongoTemplate(new MongoTemplate(client, "okraTests"))
-                .withDatabase("okraTests")
+                .withMongoTemplate(new MongoTemplate(client, "okraBenchmark"))
+                .withDatabase("okraBenchmark")
                 .withSchedulerCollectionName("schedulerCollection")
                 .withExpiration(5, TimeUnit.MINUTES)
                 .withScheduledItemClass(DefaultOkraItem.class)
                 .build();
 
+    }
+
+    public static Okra<DefaultOkraItem> prepareDefaultMongo34OkraSpring() throws UnknownHostException {
+        MongoClient client = new MongoClient(
+                mongo34Container.getContainerIpAddress(),
+                mongo34Container.getMappedPort(27017));
+
+        return new OkraSpringBuilder<DefaultOkraItem>()
+                .withMongoTemplate(new MongoTemplate(client, "okraBenchmark"))
+                .withDatabase("okraBenchmark")
+                .withSchedulerCollectionName("schedulerCollection")
+                .withExpiration(5, TimeUnit.MINUTES)
+                .withScheduledItemClass(DefaultOkraItem.class)
+                .build();
+
+    }
+
+    public Okra<DefaultOkraItem> getDefaultOkra() {
+        return okraSpringMongo32;
     }
 
 }
