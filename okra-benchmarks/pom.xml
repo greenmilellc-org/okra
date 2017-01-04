@@ -27,7 +27,7 @@
     <parent>
         <groupId>com.github.fernandonogueira.okra</groupId>
         <artifactId>okra</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.github.fernandonogueira.okra</groupId>
             <artifactId>okra-spring</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
