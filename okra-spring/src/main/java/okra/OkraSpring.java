@@ -29,6 +29,7 @@ import okra.exception.OkraRuntimeException;
 import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -77,7 +78,8 @@ public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
                 .update("status", OkraStatus.PROCESSING)
                 .set("heartbeat", LocalDateTime.now());
 
-        Query query = Query.query(mainOr);
+        Query query = Query.query(mainOr)
+                .with(new Sort(Sort.Direction.ASC, "runDate"));
 
         FindAndModifyOptions opts = new FindAndModifyOptions()
                 .returnNew(true);

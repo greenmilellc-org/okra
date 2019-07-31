@@ -1,7 +1,7 @@
 # Okra
 A simple and scalable Scheduler that uses MongoDB as backend
 
-[![codecov](https://codecov.io/gh/fernandonogueira/okra/branch/master/graph/badge.svg)](https://codecov.io/gh/fernandonogueira/okra)
+[![codecov](https://codecov.io/gh/greenmilellc-org/okra/branch/master/graph/badge.svg)](https://codecov.io/gh/greenmilellc-org/okra)
 
 ## NOTE
 This project was moved to another repository. See here: https://github.com/OkraScheduler/OkraSync
@@ -16,7 +16,7 @@ For now Okra only has one module which requires Spring Data MongoDB to work, but
 
 ### Binaries
 
-[![](https://jitpack.io/v/fernandonogueira/okra.svg)](https://jitpack.io/#fernandonogueira/okra)
+[![](https://jitpack.io/v/greenmilellc-org/okra.svg)](https://jitpack.io/#greenmilellc-org/okra)
 
 #### Gradle
 build.gradle
@@ -31,14 +31,14 @@ build.gradle
 
 ```groovy
     dependencies {
-        compile 'com.github.fernandonogueira.okra:okra-spring:x.y.z'
+        compile 'com.github.greenmilellc-org.okra:okra-spring:x.y.z'
     }
 ```
 
 #### Maven
 ```xml
 	<dependency>
-	    <groupId>com.github.fernandonogueira.okra</groupId>
+	    <groupId>com.github.greenmilellc-org.okra</groupId>
 	    <artifactId>okra-spring</artifactId>
 	    <version>x.y.z</version>
 	</dependency>
@@ -95,11 +95,11 @@ public class MyScheduler {
 To build:
 
 ```bash
-$ git clone git@github.com:fernandonogueira/okra.git
+$ git clone git@github.com:greenmilellc-org/okra.git
 $ cd okra
 $ mvn install -DskipTests
 ```
-[![Build Status](https://travis-ci.org/fernandonogueira/okra.svg?branch=master)](https://travis-ci.org/fernandonogueira/okra)
+[![Build Status](https://travis-ci.org/greenmilellc-org/okra.svg?branch=master)](https://travis-ci.org/greenmilellc-org/okra)
 
 ### LICENSE
 ```
