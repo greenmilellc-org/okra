@@ -68,17 +68,20 @@ public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
 
     @Override
     public Optional<T> poll() {
+        final Optional<T> pendingItem = findAndModify(generatePendingCriteria());
+        if (pendingItem.isPresent()) {
+            return pendingItem;
+        } else {
+            return findAndModify(generateHeartbeatCriteria());
+        }
+    }
 
-        LocalDateTime expiredheartbeatDate = LocalDateTime
-                .now()
-                .minus(defaultHeartbeatExpirationMillis, ChronoUnit.MILLIS);
-        Criteria mainOr = generatePollCriteria(expiredheartbeatDate);
-
+    private Optional<T> findAndModify(Criteria searchCriteria) {
         Update update = Update
                 .update("status", OkraStatus.PROCESSING)
                 .set("heartbeat", LocalDateTime.now());
 
-        Query query = Query.query(mainOr)
+        Query query = Query.query(searchCriteria)
                 .with(new Sort(Sort.Direction.ASC, "runDate"));
 
         FindAndModifyOptions opts = new FindAndModifyOptions()
@@ -87,21 +90,23 @@ public class OkraSpring<T extends OkraItem> extends AbstractOkra<T> {
         return Optional.ofNullable(mongoTemplate.findAndModify(query, update, opts, scheduleItemClass));
     }
 
-    private Criteria generatePollCriteria(LocalDateTime expiredHeartbeatDate) {
-
-        Criteria pendingCriteria = new Criteria().andOperator(
+    private Criteria generatePendingCriteria() {
+        return new Criteria().andOperator(
                 Criteria.where("runDate")
                         .lt(LocalDateTime.now()),
                 Criteria.where("status").is(OkraStatus.PENDING));
+    }
 
-        Criteria heartbeatCriteria = new Criteria()
+    private Criteria generateHeartbeatCriteria() {
+        LocalDateTime expiredHeartbeatDate = LocalDateTime
+                .now()
+                .minus(defaultHeartbeatExpirationMillis, ChronoUnit.MILLIS);
+        return new Criteria()
                 .andOperator(
                         Criteria.where("status").is(OkraStatus.PROCESSING),
                         new Criteria().orOperator(
                                 Criteria.where("heartbeat").lt(expiredHeartbeatDate),
                                 Criteria.where("heartbeat").is(null)));
-
-        return new Criteria().orOperator(pendingCriteria, heartbeatCriteria);
     }
 
     @Override
